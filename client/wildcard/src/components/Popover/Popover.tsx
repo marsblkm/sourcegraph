@@ -1,4 +1,3 @@
-import classNames from 'classnames'
 import { noop } from 'lodash'
 import React, {
     createContext,
@@ -183,7 +182,6 @@ export const PopoverContent = forwardRef((props, reference) => {
             target={anchor?.current ?? targetElement}
             role={role}
             aria-modal={ariaModel}
-            className={classNames('dropdown-menu', otherProps.className)}
         >
             {focusLocked ? (
                 <FocusLock disabled={!focusLock} returnFocus={true}>

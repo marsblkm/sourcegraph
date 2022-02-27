@@ -42,6 +42,7 @@ export const FloatingPanel = forwardRef((props, reference) => {
         strategy = Strategy.Fixed,
         windowPadding,
         constraintPadding,
+        targetPadding,
         constraint,
         ...otherProps
     } = props
@@ -80,6 +81,7 @@ export const FloatingPanel = forwardRef((props, reference) => {
             pin,
             windowPadding,
             constraintPadding,
+            targetPadding,
             position,
             strategy,
             overlapping,
@@ -96,6 +98,7 @@ export const FloatingPanel = forwardRef((props, reference) => {
         constraint,
         windowPadding,
         constraintPadding,
+        targetPadding,
         pin,
         position,
         strategy,
