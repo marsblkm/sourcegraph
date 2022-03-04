@@ -321,6 +321,13 @@ func (r *Resolver) GitBlobCodeIntelInfo(ctx context.Context, args *gql.GitBlobCo
 	return NewCodeIntelSupportResolver(r.resolver, args, errTracer), nil
 }
 
+func (r *Resolver) Squirrel(ctx context.Context) (_ gql.SquirrelResolver, err error) {
+	ctx, errTracer, endObservation := r.observationContext.gitBlobCodeIntelInfo.WithErrors(ctx, &err, observation.Args{})
+	endObservation.OnCancel(ctx, 1, observation.Args{})
+
+	return NewSquirrelResolver(r.resolver, errTracer), nil
+}
+
 // 🚨 SECURITY: dbstore layer handles authz for GetConfigurationPolicyByID
 func (r *Resolver) ConfigurationPolicyByID(ctx context.Context, id graphql.ID) (_ gql.CodeIntelligenceConfigurationPolicyResolver, err error) {
 	ctx, traceErrs, endObservation := r.observationContext.configurationPolicyByID.WithErrors(ctx, &err, observation.Args{LogFields: []log.Field{

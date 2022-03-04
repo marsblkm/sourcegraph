@@ -28,6 +28,7 @@ type operations struct {
 	updateIndexConfiguration  *observation.Operation
 	previewRepoFilter         *observation.Operation
 	previewGitObjectFilter    *observation.Operation
+	squirrel                  *observation.Operation
 }
 
 func newOperations(observationContext *observation.Context) *operations {
@@ -65,5 +66,6 @@ func newOperations(observationContext *observation.Context) *operations {
 		updateIndexConfiguration:  op("UpdateIndexConfiguration"),
 		previewRepoFilter:         op("PreviewRepoFilter"),
 		previewGitObjectFilter:    op("PreviewGitObjectFilter"),
+		squirrel:                  op("Squirrel"),
 	}
 }
