@@ -241,28 +241,6 @@ extend type Query {
         """
         repos: [String!]
     ): DocumentationSearchResults!
-
-    squirrel: Squirrel!
-}
-
-type Squirrel {
-    definition(location: SquirrelLocationInput!): SquirrelLocation
-}
-
-input SquirrelLocationInput {
-    repo: String!
-    commit: String!
-    path: String!
-    row: Int!
-    column: Int!
-}
-
-type SquirrelLocation {
-    repo: String!
-    commit: String!
-    path: String!
-    row: Int!
-    column: Int!
 }
 
 """
@@ -575,6 +553,11 @@ extend type GitBlob {
     Provides info on the level of code-intel support.
     """
     codeIntelInfo: CodeIntelSupport!
+
+    """
+    Provides code intelligence within the file.
+    """
+    localCodeIntel: JSONValue
 }
 
 """
