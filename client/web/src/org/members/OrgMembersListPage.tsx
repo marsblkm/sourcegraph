@@ -16,6 +16,7 @@ import {
     MenuList,
     MenuItem,
     Position,
+    PageSelector,
 } from '@sourcegraph/wildcard'
 
 import { PageTitle } from '../../components/PageTitle'
@@ -35,7 +36,7 @@ import { AddMemberToOrgModal } from './AddMemberToOrgModal'
 import { ORG_MEMBERS_QUERY, ORG_MEMBER_REMOVE_MUTATION } from './gqlQueries'
 import { IModalInviteResult, InvitedNotification, InviteMemberModalHandler } from './InviteMemberModal'
 import styles from './OrgMembersListPage.module.scss'
-import { OrgMemberNotification } from './utils'
+import { getPaginatedItems, OrgMemberNotification } from './utils'
 
 interface Props extends Pick<OrgAreaPageProps, 'org' | 'authenticatedUser' | 'isSourcegraphDotCom'> {}
 interface Member {
@@ -171,6 +172,7 @@ const MembersResultHeader: React.FunctionComponent<{ total: number; orgName: str
 export const OrgMembersListPage: React.FunctionComponent<Props> = ({ org, authenticatedUser }) => {
     const [invite, setInvite] = useState<IModalInviteResult>()
     const [notification, setNotification] = useState<string>()
+    const [page, setPage] = useState(1)
 
     const { data, loading, error, refetch } = useQuery<OrganizationMembersResult, OrganizationMembersVariables>(
         ORG_MEMBERS_QUERY,
@@ -211,6 +213,7 @@ export const OrgMembersListPage: React.FunctionComponent<Props> = ({ org, authen
     const onMemberRemoved = useCallback(
         async (username: string) => {
             setNotification(`${username} has been removed from the ${org.name} organization on Sourcegraph`)
+            setPage(1)
             await onShouldRefetch()
         },
         [setNotification, onShouldRefetch, org.name]
@@ -221,8 +224,8 @@ export const OrgMembersListPage: React.FunctionComponent<Props> = ({ org, authen
     }, [setNotification])
 
     const viewerCanAddUserToOrganization = !!authenticatedUser && authenticatedUser.siteAdmin
-
     const membersResult = data ? (data.node as MembersTypeNode) : undefined
+    const pagedData = getPaginatedItems(page, membersResult?.members.nodes)
 
     return (
         <>
@@ -258,7 +261,7 @@ export const OrgMembersListPage: React.FunctionComponent<Props> = ({ org, authen
                     {membersResult && (
                         <ul>
                             <MembersResultHeader total={membersResult.members.totalCount} orgName={org.name} />
-                            {membersResult.members.nodes.map(usr => (
+                            {pagedData.results.map(usr => (
                                 <MemberItem
                                     key={usr.id}
                                     member={usr}
@@ -278,6 +281,14 @@ export const OrgMembersListPage: React.FunctionComponent<Props> = ({ org, authen
                         />
                     )}
                 </Container>
+                {pagedData.totalPages > 1 && (
+                    <PageSelector
+                        className="mt-4"
+                        currentPage={page}
+                        onPageChange={setPage}
+                        totalPages={pagedData.totalPages}
+                    />
+                )}
 
                 {authenticatedUser &&
                     membersResult &&

@@ -73,7 +73,7 @@ export const UserAvatar: React.FunctionComponent<Props> = ({
 
     return (
         <Icon inline={inline} id={targetID} className={classNames(styles.userAvatar, className)} as="div">
-            {getInitials(name)}
+            <span className={styles.initials}>{getInitials(name)}</span>
         </Icon>
     )
 }

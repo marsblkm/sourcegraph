@@ -17,6 +17,7 @@ import {
     MenuList,
     MenuItem,
     Position,
+    PageSelector,
 } from '@sourcegraph/wildcard'
 
 import { PageTitle } from '../../components/PageTitle'
@@ -39,6 +40,7 @@ import {
     getInvitationCreationDateString,
     getInvitationExpiryDateString,
     getLocaleFormattedDateFromString,
+    getPaginatedItems,
     OrgMemberNotification,
 } from './utils'
 
@@ -243,6 +245,7 @@ export const OrgPendingInvitesPage: React.FunctionComponent<Props> = ({ org, aut
 
     const [invite, setInvite] = useState<IModalInviteResult>()
     const [notification, setNotification] = useState<string>()
+    const [page, setPage] = useState(1)
     const { data, loading, error, refetch } = useQuery<IPendingInvitations, PendingInvitationsVariables>(
         ORG_PENDING_INVITES_QUERY,
         {
@@ -262,6 +265,7 @@ export const OrgPendingInvitesPage: React.FunctionComponent<Props> = ({ org, aut
         async (recipient: string, revoked?: boolean) => {
             const message = `${revoked ? 'Revoked' : 'Resent'} invite for ${recipient}`
             setNotification(message)
+            setPage(1)
             await refetch({ id: orgId })
         },
         [setNotification, orgId, refetch]
@@ -276,6 +280,7 @@ export const OrgPendingInvitesPage: React.FunctionComponent<Props> = ({ org, aut
     }, [setNotification])
 
     const viewerCanInviteUserToOrganization = !!authenticatedUser
+    const pagedData = getPaginatedItems(page, data?.pendingInvitations)
 
     return (
         <>
@@ -314,7 +319,7 @@ export const OrgPendingInvitesPage: React.FunctionComponent<Props> = ({ org, aut
                     {data && (
                         <ul>
                             {data && data.pendingInvitations.length > 0 && <PendingInvitesHeader />}
-                            {data.pendingInvitations.map(item => (
+                            {pagedData.results.map(item => (
                                 <InvitationItem
                                     key={item.id}
                                     invite={item}
@@ -331,6 +336,14 @@ export const OrgPendingInvitesPage: React.FunctionComponent<Props> = ({ org, aut
                         />
                     )}
                 </Container>
+                {pagedData.totalPages > 1 && (
+                    <PageSelector
+                        className="mt-4"
+                        currentPage={page}
+                        onPageChange={setPage}
+                        totalPages={pagedData.totalPages}
+                    />
+                )}
                 {authenticatedUser && data && data.pendingInvitations.length === 0 && (
                     <Container>
                         <div className="d-flex flex-0 flex-column justify-content-center align-items-center">
