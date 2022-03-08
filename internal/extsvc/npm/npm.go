@@ -226,7 +226,6 @@ func (client *HTTPClient) DoesDependencyExist(ctx context.Context, dep *reposour
 	_, err = client.getDependencyInfo(ctx, dep)
 	var npmErr npmError
 	if err != nil && errors.As(err, &npmErr) && npmErr.statusCode == http.StatusNotFound {
-		log15.Info("npm dependency does not exist", "dependency", dep.PackageManagerSyntax())
 		return false, err
 	}
 	var e illFormedJSONError
