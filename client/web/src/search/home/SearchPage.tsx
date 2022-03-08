@@ -61,10 +61,9 @@ export const SearchPage: React.FunctionComponent<SearchPageProps> = props => {
         features => features.showOnboardingTour ?? false
     )
     const hasSearchQuery = useNavbarQueryState(state => state.searchQueryFromURL !== '')
-    const isGettingStartedTourEnabled = props.featureFlags.get('getting-started-tour')
     const showOnboardingTour = useMemo(
-        () => isExperimentalOnboardingTourEnabled && !hasSearchQuery && !isGettingStartedTourEnabled,
-        [hasSearchQuery, isGettingStartedTourEnabled, isExperimentalOnboardingTourEnabled]
+        () => isExperimentalOnboardingTourEnabled && !hasSearchQuery && !props.isSourcegraphDotCom,
+        [hasSearchQuery, isExperimentalOnboardingTourEnabled, props.isSourcegraphDotCom]
     )
     const showCollaborators = useExperimentalFeatures(features => features.homepageUserInvitation) ?? false
 
